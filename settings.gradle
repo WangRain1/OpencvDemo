@@ -1,0 +1,6 @@
+/*
+ * Copyright (c) 2019. Parrot Faurecia Automotive S.A.S. All rights reserved.
+ */
+
+include ':app'
+include ':java'
