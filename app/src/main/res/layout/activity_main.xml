@@ -8,18 +8,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/src"
+    <Button
+        android:id="@+id/fliter"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="50dp"
+        android:layout_height="40dp"
+        android:text="线性滤波器"
+        android:visibility="gone"
+        android:background="@color/colorAccent"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         />
 
-    <ImageView
-        android:id="@+id/dst"
+    <Button
+        android:id="@+id/feature_check"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="50dp" />
+        android:layout_height="40dp"
+        android:text="图像特征检测"
+        android:background="@color/colorAccent"
+        android:visibility="gone"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        />
 
 
 </LinearLayout>
