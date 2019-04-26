@@ -10,12 +10,14 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -39,7 +41,8 @@ public class ShowActivity extends AppCompatActivity {
                 break;
             case 1:
 //                blurEdgeCheck();
-                cannyEdgeCheck();
+//                cannyEdgeCheck();
+                huoFu();
                 break;
         }
     }
@@ -150,9 +153,45 @@ public class ShowActivity extends AppCompatActivity {
         Mat matEdge = new Mat();
         Utils.bitmapToMat(bitmap,matSrc);
         Imgproc.cvtColor(matSrc,matGray,Imgproc.COLOR_BGR2GRAY);
-        Imgproc.Canny(matSrc,matEdge,10,100);
+        Imgproc.Canny(matGray,matEdge,10,100);
         Bitmap dstBitmap = Bitmap.createBitmap(matEdge.cols(),matEdge.rows(),Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(matEdge,dstBitmap);
+        src.setImageBitmap(bitmap);
+        dst.setImageBitmap(dstBitmap);
+    }
+
+    //霍夫变换-检测直线和圆形
+    private void huoFu() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.weide);
+        Mat matSrc = new Mat();
+        Mat matGray = new Mat();
+        Mat matEdge = new Mat();
+        Utils.bitmapToMat(bitmap,matSrc);
+        Imgproc.cvtColor(matSrc,matGray,Imgproc.COLOR_BGR2GRAY);
+        Imgproc.Canny(matGray,matEdge,10,100);
+
+        Mat matLine = new Mat();
+        Imgproc.HoughCircles(matEdge,matLine,Imgproc.CV_HOUGH_GRADIENT,1,
+                matEdge.rows()/15,matGray.rows()/8);
+
+        Mat matHuoFu = new Mat();
+        matHuoFu.create(matEdge.rows(),matEdge.cols(),CvType.CV_8UC1);
+
+        for (int i=0;i<matLine.cols();i++){
+            double[] arr = matLine.get(0,i);
+            double x1,y1;
+                    int r;
+            x1 = arr[0];
+            y1 = arr[1];
+            r = (int) arr[2];
+
+            Point point1 = new Point(x1,y1);
+
+            Imgproc.circle(matHuoFu,point1,r,new Scalar(255,0,0));
+        }
+
+        Bitmap dstBitmap = Bitmap.createBitmap(matHuoFu.cols(),matHuoFu.rows(),Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(matHuoFu,dstBitmap);
         src.setImageBitmap(bitmap);
         dst.setImageBitmap(dstBitmap);
     }
