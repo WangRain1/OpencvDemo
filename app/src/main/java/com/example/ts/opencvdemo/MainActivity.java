@@ -15,6 +15,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "sssssssssss";
 
     Button fliter;
+    Button feature_check;
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
                 case LoaderCallbackInterface.SUCCESS:
                     Log.i("rr", "OpenCV loaded successfully");
                     fliter.setVisibility(View.VISIBLE);
+                    feature_check.setVisibility(View.VISIBLE);
                 break;
                 default:
                     super.onManagerConnected(status);
@@ -43,7 +46,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        feature_check = findViewById(R.id.feature_check);
+        feature_check.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,ShowActivity.class);
+                intent.putExtra(ShowActivity.TYPE,1);
+                startActivity(intent);
+            }
+        });
 
     }
 

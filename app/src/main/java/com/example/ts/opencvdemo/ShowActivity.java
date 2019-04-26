@@ -6,13 +6,17 @@ package com.example.ts.opencvdemo;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -20,8 +24,6 @@ public class ShowActivity extends AppCompatActivity {
     private static final String TAG = "ShowActivity";
     public static final String TYPE = "COME_TYPE";
 
-    Mat mMat;
-    Mat mDst;
     ImageView src, dst;
     int mOption = 4;
 
@@ -31,22 +33,23 @@ public class ShowActivity extends AppCompatActivity {
         setContentView(R.layout.show);
         src = findViewById(R.id.src);
         dst = findViewById(R.id.dst);
-
         switch (getIntent().getExtras().getInt(TYPE)){
             case 0:
-                loadSuccess(mOption);
+                lineFliter(mOption);
                 break;
             case 1:
+//                blurEdgeCheck();
+                cannyEdgeCheck();
                 break;
         }
-
     }
 
     /**
      * 线性滤波
-     * @param option
      */
-    private void loadSuccess(int option){
+    private void lineFliter(int option){
+        Mat mMat;
+        Mat mDst;
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.weide);
         mMat = new Mat(bitmap.getHeight(),bitmap.getWidth(),CvType.CV_8UC4);
         mDst = new Mat(bitmap.getHeight(),bitmap.getWidth(),CvType.CV_8UC4);
@@ -92,7 +95,8 @@ public class ShowActivity extends AppCompatActivity {
             case 3:
                 //伐值化
                 Utils.bitmapToMat(bitmap,mMat);
-                Imgproc.threshold(mMat,mDst,100,255,Imgproc.THRESH_BINARY);
+                Imgproc.cvtColor(mMat,mDst,Imgproc.CV_CHAIN_CODE);
+                Imgproc.threshold(mDst,mDst,100,255,Imgproc.THRESH_TOZERO);
                 Bitmap dstBp2 = Bitmap.createBitmap(mDst.cols(),mDst.rows(),Bitmap.Config.ARGB_8888);
                 Utils.matToBitmap(mDst,dstBp2);
                 src.setImageBitmap(bitmap);
@@ -111,5 +115,45 @@ public class ShowActivity extends AppCompatActivity {
                 dst.setImageBitmap(dstBp3);
                 break;
         }
+    }
+
+    //高斯差分-边缘检测
+    private void blurEdgeCheck() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.gx);
+        Mat matSrc = new Mat();
+        Mat matGray = new Mat();
+        Mat matBlur1 = new Mat();
+        Mat matBlur2 = new Mat();
+        Utils.bitmapToMat(bitmap,matSrc);
+        Imgproc.cvtColor(matSrc,matGray,Imgproc.COLOR_BGR2GRAY);
+
+        Imgproc.GaussianBlur(matGray,matBlur1,new Size(5,5),3);
+        Imgproc.GaussianBlur(matGray,matBlur2,new Size(11,11),3);
+
+        Mat resultMat = new Mat();
+        Core.absdiff(matBlur1,matBlur2,resultMat);
+        //在此Scalar 代表单通道的像素值，multiply方法就是让mat的每个像素点 和 scalar相乘
+        Core.multiply(resultMat,new Scalar(100),resultMat);
+        Imgproc.threshold(resultMat,resultMat,100,255,Imgproc.THRESH_BINARY_INV);
+
+        Bitmap dstBitmap = Bitmap.createBitmap(resultMat.cols(),resultMat.rows(),Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(resultMat,dstBitmap);
+        src.setImageBitmap(bitmap);
+        dst.setImageBitmap(dstBitmap);
+    }
+
+    //canny-边缘检测
+    private void cannyEdgeCheck() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.weide);
+        Mat matSrc = new Mat();
+        Mat matGray = new Mat();
+        Mat matEdge = new Mat();
+        Utils.bitmapToMat(bitmap,matSrc);
+        Imgproc.cvtColor(matSrc,matGray,Imgproc.COLOR_BGR2GRAY);
+        Imgproc.Canny(matSrc,matEdge,10,100);
+        Bitmap dstBitmap = Bitmap.createBitmap(matEdge.cols(),matEdge.rows(),Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(matEdge,dstBitmap);
+        src.setImageBitmap(bitmap);
+        dst.setImageBitmap(dstBitmap);
     }
 }
