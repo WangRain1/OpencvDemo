@@ -50,8 +50,7 @@ public class MainActivity extends AppCompatActivity {
         feature_check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,ShowActivity.class);
-                intent.putExtra(ShowActivity.TYPE,1);
+                Intent intent = new Intent(MainActivity.this,CameraActivity.class);
                 startActivity(intent);
             }
         });
@@ -69,6 +68,4 @@ public class MainActivity extends AppCompatActivity {
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
     }
-
-
 }
