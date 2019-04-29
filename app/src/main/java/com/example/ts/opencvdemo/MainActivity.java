@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button fliter;
     Button feature_check;
+    Button camera;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("rr", "OpenCV loaded successfully");
                     fliter.setVisibility(View.VISIBLE);
                     feature_check.setVisibility(View.VISIBLE);
+                    camera.setVisibility(View.VISIBLE);
                 break;
                 default:
                     super.onManagerConnected(status);
@@ -48,6 +50,16 @@ public class MainActivity extends AppCompatActivity {
         });
         feature_check = findViewById(R.id.feature_check);
         feature_check.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,ShowActivity.class);
+                intent.putExtra(ShowActivity.TYPE,1);
+                startActivity(intent);
+            }
+        });
+
+        camera = findViewById(R.id.camera);
+        camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,CameraActivity.class);
