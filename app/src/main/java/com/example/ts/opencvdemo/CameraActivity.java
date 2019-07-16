@@ -7,6 +7,7 @@ package com.example.ts.opencvdemo;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.WindowManager;
 
 import org.opencv.android.CameraBridgeViewBase;
@@ -53,6 +54,7 @@ public class CameraActivity extends AppCompatActivity {
 
             @Override
             public Mat onCameraFrame(Mat aInputFrame) {
+                Log.e("-------","----onCameraFrame----");
                 Imgproc.cvtColor(aInputFrame, grayscaleImage, Imgproc.COLOR_RGBA2RGB);
                 MatOfRect faces = new MatOfRect();
                 if (cascadeClassifier != null) {

@@ -18,6 +18,7 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -37,12 +38,12 @@ public class ShowActivity extends AppCompatActivity {
         dst = findViewById(R.id.dst);
         switch (getIntent().getExtras().getInt(TYPE)){
             case 0:
-                lineFliter(mOption);
+                lineFliter(0);
                 break;
             case 1:
 //                blurEdgeCheck();
-//                cannyEdgeCheck();
-                huoFu();
+                cannyEdgeCheck();
+//                huoFu();
                 break;
         }
     }
@@ -62,10 +63,18 @@ public class ShowActivity extends AppCompatActivity {
                 Utils.bitmapToMat(bitmap,mMat);
                 Imgproc.medianBlur(mMat,mDst,23);
 //                Imgproc.blur(mMat,mDst,new Size(8,8));
-                Bitmap dstBitmap = Bitmap.createBitmap(mDst.cols(),mDst.rows(),Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(mDst,dstBitmap);
+
+                Log.e("---------","----lineFliter--0-");
+                Rect rect = new Rect(10,0,mDst.cols()-200,mDst.rows()-100);
+
+                Mat matr = new Mat(mDst,rect);
+
+                Bitmap dstBitmap = Bitmap.createBitmap(matr.cols(),matr.rows(),Bitmap.Config.ARGB_8888);
+
+                Utils.matToBitmap(matr,dstBitmap);
                 src.setImageBitmap(bitmap);
                 dst.setImageBitmap(dstBitmap);
+
                 break;
             case 1:
                 //锐化
@@ -122,7 +131,7 @@ public class ShowActivity extends AppCompatActivity {
 
     //高斯差分-边缘检测
     private void blurEdgeCheck() {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.gx);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.sddd);
         Mat matSrc = new Mat();
         Mat matGray = new Mat();
         Mat matBlur1 = new Mat();
@@ -147,7 +156,7 @@ public class ShowActivity extends AppCompatActivity {
 
     //canny-边缘检测
     private void cannyEdgeCheck() {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.weide);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.sddd);
         Mat matSrc = new Mat();
         Mat matGray = new Mat();
         Mat matEdge = new Mat();
